@@ -6,7 +6,6 @@ const sharp = require('../utils/sharp')
 exports.getBestRating = (req, res, next) => {
     //on récupère tous les livres
     Book.find()
-    
     .then((books) => {
         //on les trie dans l'ordre décroissant, on récupère les trois premiers et on les renvoie en réponse
         const sortedBooks = books.sort((a, b) => b.averageRating - a.averageRating);
@@ -14,7 +13,6 @@ exports.getBestRating = (req, res, next) => {
 
         res.status(200).json(topThree);
     })
-
     //on gère l'erreur s'il y en a une
     .catch((error) => {
         res.status(404).json({error});
@@ -27,10 +25,8 @@ exports.getOneBook = (req, res, next) => {
     Book.findOne({
         _id: req.params.id
     })
-
     //on renvoie le livre en question en réponse
     .then((book) => res.status(200).json(book))
-
     //on gère l'erreur s'il y en a une
     .catch((error) => res.status(404).json({error}))
 }
@@ -39,10 +35,8 @@ exports.getOneBook = (req, res, next) => {
 exports.getAllBooks = (req, res, next) => {
     //on récupère tous les livres en laissant les parenthèses vides
     Book.find()
-
     //on renvoie la liste de tous les livres
     .then((books) => res.status(200).json(books))
-
     //on gère l'erreur s'il y en a une
     .catch((error) => res.status(400).json({error}))
 }
@@ -72,10 +66,8 @@ exports.createBook = async (req, res, next) => {
 
     //on enregistre le livre dans la base de données.
     book.save()
-
     //on envoie un message de succès
     .then(() => res.status(201).json({message : 'Livré enregistré !'}))
-
     //on gère l'erreur s'il y en a une
     .catch((error) => res.status(400).json({error}))
 }
@@ -97,7 +89,6 @@ exports.modifyBook = async (req, res, next) => {
 
     //on récupère le livre qui sera modifié
     Book.findOne({_id: req.params.id})
-
     .then((book) => {
         //si l'utilisateur n'a pas le bon userId, on renvoie un message d'erreur
         if (book.userId != req.auth.userId) {
@@ -105,15 +96,12 @@ exports.modifyBook = async (req, res, next) => {
         //si l'utilisateur est le bon, on met à jour le livre dans la base de données avec les nouvelles informations
         } else {
             Book.updateOne({_id: req.params.id}, {...bookObject, _id: req.params.id })
-
             //on envoie un message de succès
             .then(() => res.status(200).json({message: 'Livre modifié !'}))
-
             //on gère l'erreur s'il y en a une
             .catch((error) => res.status(401).json({error}))
         }
     })
-
     //on gère l'erreur s'il y en a une
     .catch((error) => res.status(400).json({error}))
 }
@@ -122,7 +110,6 @@ exports.modifyBook = async (req, res, next) => {
 exports.deleteBook = (req, res, next) => {
     //on récupère le livre en question dans la bdd
     Book.findOne({_id: req.params.id})
-
     .then((book) => {
         //si l'utilisateur n'a pas le bon userId, on renvoie un message d'erreur
         if(book.userId != req.auth.userId) {
@@ -134,16 +121,13 @@ exports.deleteBook = (req, res, next) => {
             fs.unlink(`images/${filename}`, () => {
                 //puis on supprime le livre dans la bdd
                 Book.deleteOne({_id: req.params.id})
-
                 //et on envoie un message de succès
                 .then(() => res.status(200).json({message: 'Livre supprimé'}))
-
                 //on gère l'erreur s'il y en a une
                 .catch((error) => res.status(500).json({error}))
             })
         }
     })
-
     //on gère l'erreur s'il y en a une
     .catch((error) => res.status(500).json({error}))
 }
@@ -152,7 +136,6 @@ exports.deleteBook = (req, res, next) => {
 exports.addRating = (req, res, next) => {
     //on récupère le livre que l'utilisateur souhaite noter
     Book.findOne({_id: req.params.id})
-
     .then((book) => {
         //on cherche si une note de la part  de l'utilisateur existe déjà
         const existingRating = book.ratings.filter((rating) => rating.userId === req.auth.userId)
@@ -178,11 +161,9 @@ exports.addRating = (req, res, next) => {
                 averageRating: newAverageRating
                 },
                 { new: true })
-
             //on renvoie le livre mis à jour dans la réponse
             .then((updatedBook) => {
                 return res.status(201).json(updatedBook)})
-
             //on gère l'erreur s'il y en a une
             .catch(error => res.status(400).json({error}))
 
@@ -191,7 +172,6 @@ exports.addRating = (req, res, next) => {
              res.status(400).json({message: 'Livre déjà noté'}) 
         }
     })
-
     //on gère l'erreur s'il y en a une
     .catch((error) => res.status(404).json({error}))
 }

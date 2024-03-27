@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose'); 
 const path = require('path')
+require('dotenv').config()
 
 //importation des routers requis pour l'app
 const bookRoutes = require('./routes/books')
@@ -9,7 +10,7 @@ const userRoutes = require('./routes/user')
 //définition de l'app avec express
 const app = express();
 //connexion de l'app à la base de données
-mongoose.connect('mongodb+srv://rocheaxelle:Jg8xu1dVZz1K50i3@cluster0.nqwqkz6.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect(process.env.MANGOURL,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
